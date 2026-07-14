@@ -1,0 +1,95 @@
+//A)
+using System;
+delegate void Operation(int a, int b);
+class Calculator{
+    public void Add(int a, int b){
+        Console.WriteLine("Addition = " + (a + b));
+    }
+    public void Subtract(int a, int b){
+        Console.WriteLine("Subtraction = " + (a - b));
+    }
+    public void Multiply(int a, int b){
+        Console.WriteLine("Multiplication = " + (a * b));
+    }
+    public void Divide(int a, int b){
+        if (b != 0)
+            Console.WriteLine("Division = " + (a / b));
+        else
+            Console.WriteLine("Cannot divide by zero");
+    }
+}
+class Program{
+    static void Main(string[] args){
+        Calculator c = new Calculator();
+        Operation obj;
+        obj = c.Add;
+        obj(20, 10);
+
+        obj = c.Subtract;
+        obj(20, 10);
+
+        obj = c.Multiply;
+        obj(20, 10);
+
+        obj = c.Divide;
+        obj(20, 10);
+
+        Console.ReadLine();
+    }
+}
+
+//B)
+using System;
+delegate void Message();
+class Program{
+    public void Hello(){
+        Console.WriteLine("Hello guys!!");
+    }
+    public void Fine(){
+        Console.WriteLine("How are you all?? I'm fine.");
+    }
+    static void Main(string[] args){
+        Program p = new Program();
+        Message msg = p.Hello;
+        msg += p.Fine;
+        msg();
+        Console.ReadLine();
+    }
+}
+
+
+//c)
+using System;
+class BankAccount{
+    public int AccountNumber { get; set; }
+    private double balance;
+    public double Balance{
+        get{
+            return balance;
+        }
+        set{
+            if (value >= 0)
+                balance = value;
+            else
+                Console.WriteLine("Balance cannot be negative.");
+        }
+    }
+}
+class Program{
+    static void Main(string[] args){ 
+        BankAccount b = new BankAccount();
+
+        b.AccountNumber = 1001;
+        b.Balance = 5000;
+
+        Console.WriteLine("Account Number: " + b.AccountNumber);
+        Console.WriteLine("Balance: " + b.Balance);
+
+        b.Balance = -1000;
+
+        Console.WriteLine("Final Balance: " + b.Balance);
+
+        Console.WriteLine("Ritesh Chaubey T005");
+        Console.ReadLine();
+    }
+}
