@@ -1,0 +1,160 @@
+CODE:
+(ProductController.cs):
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using WebApplication3.Data;
+using WebApplication3.Models;
+namespace WebApplication3.Controllers
+{
+    [Authorize]
+    public class ProductController : Controller
+    {
+        private readonly AppDbContext db;
+        public ProductController(AppDbContext context)
+        {
+            db = context;
+        }
+        public IActionResult Index()
+        {
+            return View(db.Products.ToList());
+        }
+        public IActionResult Create()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Create(Product product)
+        {
+            db.Products.Add(product);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public IActionResult Edit(int id)
+        {
+            return View(db.Products.Find(id));
+        }
+        [HttpPost]
+        public IActionResult Edit(Product product)
+        {
+            db.Products.Update(product);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public IActionResult Delete(int id)
+        {
+            var p = db.Products.Find(id);
+            db.Products.Remove(p);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public IActionResult Details(int id)
+        {
+            return View(db.Products.Find(id));
+        }
+    }
+}
+(Program.cs):
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using WebApplication3.Data;
+var builder = WebApplication.CreateBuilder(args);
+// Add services
+builder.Services.AddControllersWithViews();
+// Register DbContext
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
+// Cookie Authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Home/Login";
+        options.AccessDeniedPath = "/Home/Login";
+    });
+// Authorization
+builder.Services.AddAuthorization();
+var app = builder.Build();
+// Configure middleware
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.Run();
+(appsetting.json):
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=ShoppingDB;Trusted_Connection=True;TrustServerCertificate=True;",
+    "AppDbContext": "Server=(localdb)\\mssqllocaldb;Database=AppDbContext;Trusted_Connection=True;MultipleActiveResultSets=true"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
+}
+
+(AppDbContext.cs):
+using Microsoft.EntityFrameworkCore;
+using WebApplication3.Models;
+
+namespace WebApplication3.Data
+{
+    public class AppDbContext : DbContext
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+            : base(options)
+        {
+        }
+
+        public DbSet<Product> Products { get; set; }
+    }
+}
+(Product.cs):
+using System.ComponentModel.DataAnnotations;
+namespace WebApplication3.Models
+{
+    public class Product
+    {
+        public int Id { get; set; }
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        public string Category { get; set; }
+        public decimal Price { get; set; }
+        public int Quantity { get; set; }
+    }
+}
+
+(Index.cshtml):
+  <h2>Online Shopping Management System</h2>
+<h3>Selected Theme : @ViewBag.Theme</h3>
+<a asp-action="SetTheme" asp-route-theme="Light">Light Theme</a>
+<br>
+<br>
+<a asp-action="SetTheme" asp-route-theme="Dark">Dark Theme</a>
+<br>
+<br>
+<a asp-action="Login">Login</a>
+
+(Login.cshtml):
+<form method="post">
+    Username
+    <input type="text" name="username" />
+    <br /><br />
+    Password
+    <input type="password" name="password" />
+    <br /><br />
+    <input type="submit" value="Login" />
+</form>
+<h3>@ViewBag.Message</h3>
