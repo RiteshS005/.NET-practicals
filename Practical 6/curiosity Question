@@ -1,0 +1,66 @@
+Code:-
+Offline.html:-
+<!DOCTYPE html>
+<head>
+    <title>Offline</title>
+</head>
+<body>
+    <h1>You are Offline</h1>
+    <p>Please connect to the internet to access the College Portal.</p>
+</body>
+</html>
+
+Manifest.json:-
+{
+  "name": "College Information Portal",
+  "short_name": "College Portal",
+  "description": "College website for notices, timetables and study materials.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d6efd",
+  "icons": [
+    {
+      "src": "icons/icon3.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon4.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+
+service-worker.js:-
+const cache = "college-pwa-v1";
+
+self.addEventListener("install", event => {
+    event.waitUntil(
+        caches.open(cache).then(cacheData => {
+            return cacheData.addAll([
+                "/",
+                "/offline.html"
+            ]);
+        })
+    );
+    console.log("Service Worker Installed");
+});
+
+self.addEventListener("fetch", e => {
+    e.respondWith(
+        fetch(e.request).catch(() => {
+            return caches.match("/offline.html");
+        })
+    );
+});
+
+_Layout.cshtml:-
+<link rel="manifest" href="/manifest.json" />
+(Write in head)
+<script>
+     if ("serviceWorker" in navigator) {
+             navigator.serviceWorker.register("/service-worker.js");
+     }
+ </script>
