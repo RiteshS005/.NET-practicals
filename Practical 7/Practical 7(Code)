@@ -1,0 +1,137 @@
+a. Develop a PWA that works in offline mode using Service Worker.
+Code:-
+Manifest.json:-
+{
+  "name": "College Information Portal",
+  "short_name": "College Portal",
+  "description": "College website for notices, timetables and study materials.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d6efd",
+  "icons": [
+    {
+      "src": "icons/icon3.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon4.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+service-worker.js:-
+const cache = "college-pwa-v1";
+self.addEventListener("install", event => {
+    event.waitUntil(
+        caches.open(cache).then(cacheData => {
+            return cacheData.addAll([
+                "/",
+                "/offline.html"
+            ]);
+        })
+    );
+    console.log("Service Worker Installed");
+});
+self.addEventListener("fetch", e => {
+    e.respondWith(
+        fetch(e.request).catch(() => {
+            return caches.match("/offline.html");
+        })
+    );
+});
+Offline.html:-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline College Portal</title>
+</head>
+<body>
+    <h1>College Information Portal</h1>
+    <h2>Offline Mode</h2>
+    <p>You are currently offline.</p>
+    <h3>Available Information</h3>
+    <ul>
+        <li>About College</li>
+        <li>Courses Offered</li>
+        <li>Departments</li>
+        <li>Faculty Details</li>
+        <li>Contact Information</li>
+    </ul>
+    <p>Please reconnect to the internet for the latest updates.</p>
+</body>
+</html>
+Output:-
+
+
+b. Create a Student Record Management PWA.
+Code:-
+service-worker.js:-
+const CACHE = "v1";
+self.addEventListener("install", e => {
+    e.waitUntil(
+        caches.open(CACHE).then(cache => {
+            return cache.addAll([
+                "/",
+                "/Home/Index",
+                "/css/site.css",
+                "/js/site.js"
+            ]);
+        })
+    );
+});
+self.addEventListener("fetch", e => {
+    e.respondWith(
+        caches.match(e.request).then(response => {
+            return response || fetch(e.request);
+        })
+    );
+});
+manifest.json:-
+{
+  "name": "college portal",
+  "short_name": "cp",
+  "start_url": "/",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "icons/icon1.png",
+      "sizes": "148x148",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
+Homecontroller.cs:-
+     public IActionResult Index()
+  {
+      student s = new student();
+      s.RollNo = 5;
+      s.Name = "Ritesh";
+      return View(s);
+  }
+Index.cshtml:-
+<h1>Offline Page</h1>
+ <h2>Student Record</h2>
+ <p>Roll No : @Model.RollNo</p>
+ <p>Name : @Model.Name</p>
+Student.cs:-
+namespace WebApplication12.Models
+{
+    public class student
+    {
+        public int RollNo { get; set; }
+        public string Name { get; set; }}}
+Output:-
+
+
