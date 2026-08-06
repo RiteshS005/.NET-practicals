@@ -1,0 +1,112 @@
+a. Create an HTML page that would be the starting point of the application. This HTML will contain a link to the file named manifest.json. This is an important file that would be created in the next step. 
+Code:-
+StudentController.cs:-
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+namespace WebApplication13.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class StudentController : ControllerBase
+    {
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return Ok(new
+            {
+                RollNo = 5,
+                Name = "Ritesh"
+            });
+
+        }
+    }
+}
+Student.cs:-
+namespace WebApplication13.Models
+{
+    public class Student
+    {
+        public int rollno { get; set; }
+        public String name { get; set; }
+    }
+}
+Index.cshtml:-
+@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="text-center">
+    <h2>Student Record</h2>
+    <button onclick="loadStudent()">Load Student</button>
+    <p id="data"></p>
+    <script>
+            function loadStudent(){
+            fetch("/api/student")
+            .then(response => response.json())
+            .then(student=>{
+            document.getElementById("data").innerHTML=
+            "Roll No : "+student.rollNo+
+            "<br>Name : "+student.name;
+            });
+            }
+    </script>
+</div>
+Manifest.json:-
+{
+    "name": "Student PWA(T005)",
+    "short_name": "Student",
+    "start_url": "/",
+    "display": "standalone"
+}
+b. Create a simple Web API that returns Student data in JSON format.
+Code:-
+StudentController.cs:-
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+namespace WebApplication13.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class StudentController : ControllerBase
+    {
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return Ok(new
+            {
+                RollNo = 5,
+                Name = "Ritesh"
+            });
+
+        }
+    }
+}
+Student.cs:-
+namespace WebApplication13.Models
+{
+    public class Student
+    {
+        public int rollno { get; set; }
+        public String name { get; set; }
+    }
+}
+
+Index.cshtml:-
+@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="text-center">
+    <h2>Student Record</h2>
+    <button onclick="loadStudent()">Load Student</button>
+    <p id="data"></p>
+    <script>
+            function loadStudent(){
+            fetch("/api/student")
+            .then(response => response.json())
+            .then(student=>{
+            document.getElementById("data").innerHTML=
+            "Roll No : "+student.rollNo+
+            "<br>Name : "+student.name;
+            });
+            }
+    </script>
+</div>
